@@ -566,6 +566,16 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
 				// Invoke factory processors registered as beans in the context.
+				//TODO 此处扫描所有的bd
+				//执行时机这一点非常重要:
+				//1.首先执行子类的也就是beanDefinitionRegistryPostProcessor，里面也是策略模式的具体实现
+				//1.1首先执行实现了PriorityOrdered接口的beanDefinitionRegistryPostProcessor
+				//1.2之后执行实现了Order接口的beanDefinitionRegistryPostProcessor
+				//1.3最后 再去执行剩下的所有beanDefinitionRegistryPostProcessor，并且通过while循环查找确保在加载过程中没有
+				//新的beanDefinitionRegistryPostProcessor加入没有就结束循环
+				//通过bean工厂的后置处理器 完成扫描
+				//扫描出所有的bd put到bdMap中
+				//通过bean的后置处理器完成cglib代
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
